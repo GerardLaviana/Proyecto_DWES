@@ -12,23 +12,7 @@
 </head>
 <body>
     <div class="padre">
-        <header class="header">
-            <div class="menu">
-                <div class="logo">
-                    <a href="index.html"><i class="fa-solid fa-utensils"></i></a>
-                </div>
-                <div class="busqueda">
-                    <input type="text">
-                    <button>Buscar</button>
-                </div>
-                <div class="descarga">
-                    <nav class="nav">
-                        <a href="#">Ingredientes</a>
-                        <a href="#" >Usuario</a>
-                    </nav>
-                </div>
-            </div>
-        </header>
+		<div class="insert-menu" th:insert="menu::menu"></div>        
 
         <section class="section">
             <div>
