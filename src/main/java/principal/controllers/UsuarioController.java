@@ -48,17 +48,7 @@ public class UsuarioController {
 		
 		Usuario usuMostrar = usuRepo.findById(id).get();
 		model.addAttribute("usuMostrar", usuMostrar);
-		/*
-		ArrayList<Pedido> misPedidos = (ArrayList<Pedido>) pedidoRepo.findAll();
-		ArrayList<Alumno> alumnos = (ArrayList<Alumno>) alumnoRepo.findAll();
-		ArrayList<Bocadillo> bocas = (ArrayList<Bocadillo>) bocaRepo.findAll();
-		
-
-		// En el template de alumnos imprimir tabla de alumnos
-		model.addAttribute("listaPedidos", misPedidos);
-		model.addAttribute("alumnos", alumnos);
-		model.addAttribute("ListaBoca", bocas);
-		*/
+		model.addAttribute("usuaEditar", new Usuario());
 		return "usuario";
 	}
 
@@ -76,6 +66,19 @@ public class UsuarioController {
 	String deleteUsuario(@PathVariable(name="id") Integer id) {
 		Usuario usuABorrar = usuRepo.findById(id).get();
 		usuRepo.delete(usuABorrar);
+		
+		return "redirect:/usuarios";
+	}
+	
+	@PostMapping(value={"/edit/{id}"})
+	public String editUsu(@PathVariable(name="id") Integer id, @ModelAttribute("usuaEditar") Usuario usuEditado, BindingResult binding ) {
+		
+		Usuario usuaEditar = usuRepo.findById(id).get();
+		usuaEditar.setNombre(usuEditado.getNombre());
+		usuaEditar.setPassword(usuEditado.getPassword());
+		usuaEditar.setEmail(usuEditado.getEmail());
+		usuaEditar.setAdmin(usuEditado.isAdmin());
+		usuRepo.save(usuaEditar);
 		
 		return "redirect:/usuarios";
 	}

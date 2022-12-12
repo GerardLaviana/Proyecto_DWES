@@ -40,7 +40,7 @@
 								<div class="card-header text-dark bg-light m-0">Recetas con este Ingrediente</div>
 								<div class="card-body">
 									<span th:each="receta : *{recetas}">
-										<p><a th:href="@{/{id}(id=${receta.id})}" class="card-text" th:text="${receta.nombre}">Id de la Receta</a></p>
+										<p><a th:href="@{/{id}(id=${receta.id})}" class="card-text text-dark" th:text="${receta.nombre}">Id de la Receta</a></p>
 									</span>
 								</div>
 							</div>
@@ -52,7 +52,7 @@
 		
 		<!-- edit modal-->
 					<div class="modal fade" th:id="modal-edit+${ingreMostrar.id}">
-						<div class="modal-dialog" role="document">
+						<div class="modal-dialog modal-lg" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
 									<h4 class="modal-title" id="exampleModalLabel">Editar</h4>
@@ -70,25 +70,23 @@
 									<form action="#" th:action="@{/ingredientes/edit/{id}(id=${ingreMostrar.id})}"
 										th:object="${ingreaEditar}" method="post">
 										<div class="form-row">
-											<div class="form-group  mt-4">
-												<label for="texto">Nombre</label>
+											<div class="form-group col-md-6">
+												<label class="p-0 ml-0" for="texto">Nombre</label>
 												<input type="text" th:field="*{nombre}" class="form-control" id="exampleInputEmail1"
-													placeholder="Nombre" />
+													th:placeholder="${ingreMostrar.nombre}" />
 			
 											</div>
-										</div>
-										<div class="form-row">
-											<div class="form-group  mt-4">
-												<label for="texto">Tipo</label>
+											<div class="form-group col-md-5">
+												<label class="p-0 ml-0" for="texto">Tipo</label>
 												<input type="text" th:field="*{tipo}" class="form-control" id="exampleInputEmail1"
-													placeholder="Tipo" />
+													th:placeholder="${ingreMostrar.tipo}" />
 			
 											</div>
 										</div>
 										<div class="form-row">
-											<div class="form-group  mt-4">
-												<label for="texto">Gluten</label>
-												<input type="checkbox" th:field="*{gluten}" class="form-control" id="exampleInputEmail1"
+											<div class="form-group">
+												<label class="p-0 ml-0" for="texto">Gluten</label>
+												<input type="checkbox" th:checked="${ingreMostrar.gluten}" th:field="*{gluten}" class="form-control" id="exampleInputEmail1"
 													value="1" />
 			
 											</div>
@@ -98,7 +96,7 @@
 
 								</div>
 								<div class="modal-footer">
-									<button class="btn btn-secondary btn-sm" data-dismiss="modal" aria-hidden="true">
+									<button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
 										Cancelar
 									</button>
 									<input type="submit" value="Editar" class="btn btn-primary float-right">

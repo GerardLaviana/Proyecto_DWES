@@ -30,7 +30,9 @@ html, body{
     padding: 0;
     margin: 0;
     display: flex;
+    position: sticky;
     flex-flow: column nowrap;
+    z-index: 5;
 }
     .menu{
         background-color: var(--verde-fondo);
@@ -76,16 +78,22 @@ html, body{
             font-size: 15px;
             font-weight: bold;
         }
-
+		.descarga{
+			margin:0 !important;
+			padding: 0 !important;
+		}
         .nav{
             display: flex;
             flex-flow: row nowrap !important;
             flex: 5 1 20%;
+            margin-top: 0 !important;
         }
             .nav a{
                 text-decoration: none;
                 color: var(--blanco);
                 font-size: 1.25rem;
+                padding: 0;
+                margin: 8px;
             }
 
             .nav button{
@@ -163,4 +171,13 @@ html, body{
             
 .tabla-usuarios , .tabla-ingredientes{
 	margin-top: 100px;
+}
+
+.img-receta{
+	max-width: 400px;
+}
+
+i{
+	margin: 0;
+	padding: 0;
 }

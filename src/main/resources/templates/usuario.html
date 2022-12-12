@@ -13,7 +13,109 @@
 <body>
     <div class="padre">
         <div class="insert-menu" th:insert="menu::menu"></div>
-        <h1>SIN TERMINAR</h1>
+        <div class="row pl-5 pr-5">
+			<div class="col-12">
+				<div th:object="${usuMostrar}">
+					<div class="card-body row pt-4 pb-4">
+						<div class="col-6">
+							<div class="card p-0 border-white bg-transparent">
+								<div class="card-header text-dark bg-light m-0">Datos del usuario</div>
+								<div class="card-body">
+									<div class="mb-2">
+										<h5 class="mb-2 card-text" th:text="*{nombre}">Nombre del Usuario</h5>
+										<p class="mb-2 card-text">Email: <span th:text="*{email}"></p>
+										<p class="mb-2 card-text">Contraseña: <span th:text="*{password}"></p>
+										<p class="mb-2 card-text">Administrador: <span th:text="*{admin}"></p>
+									</div>
+									<div class="d-flex flex-row">
+									<p><a class="btn btn-secondary text-white" style="cursor:pointer"
+										data-toggle="modal" data-target="#modal-edit"
+										th:attr="data-target='#modal-edit'+${usuMostrar.id}">Editar</a></p>
+									<p><a th:href="@{/usuarios}" class="btn btn-danger">Cerrar</a></p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-5">
+							<div class="card p-0 border-white bg-transparent">
+								<div class="card-header text-dark bg-light m-0">Recetas creadas por este Usuario</div>
+								<div class="card-body">
+									<span th:each="receta : *{recetas}">
+										<p><a th:href="@{/{id}(id=${receta.id})}" class="card-text text-dark" th:text="${receta.nombre}">Nombre de la Receta</a></p>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>			
+			</div>
+		</div>
+		
+		<!-- edit modal-->
+					<div class="modal fade" th:id="modal-edit+${usuMostrar.id}">
+						<div class="modal-dialog modal-lg" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title" id="exampleModalLabel">Editar</h4>
+									<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">×</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<p class="error-text">Introduce nombre nuevo para el usuario:
+										<strong><span th:text="${usuMostrar.nombre}"></span></strong>
+									</p>
+
+
+									<!-- Formulario edit alumno-->
+									<form action="#" th:action="@{/usuarios/edit/{id}(id=${usuMostrar.id})}"
+										th:object="${usuaEditar}" method="post">
+										<div class="form-row">
+											<div class="form-group col-md-6">
+												<label class="p-0 ml-0" for="texto">Nombre</label>
+												<input type="text" th:field="*{nombre}" th:placeholder="${usuMostrar.nombre}" class="form-control" id="exampleInputEmail1"
+												/>
+			
+											</div>
+											<div class="form-group col-md-5">
+												<label class="p-0 ml-0" for="texto">Contraseña</label>
+												<input type="password" th:placeholder="${usuMostrar.password}" th:field="*{password}" class="form-control" id="exampleInputEmail1"
+												/>
+			
+											</div>
+											
+										</div>
+										<div class="form-row">
+											<div class="form-group col-md-7">
+												<label class="p-0 ml-0" for="texto">Email</label>
+												<input type="text" th:field="*{email}" class="form-control" id="exampleInputEmail1"
+													th:placeholder="${usuMostrar.email}" />
+			
+											</div>
+											<div class="form-group col-md-4">
+												<label class="p-0 ml-0" for="texto">Admin</label>
+												<input type="checkbox" name="admin" th:checked="${usuMostrar.admin}" th:field="*{admin}" class="form-control" id="exampleInputEmail1"
+													value="1" />
+			
+											</div>
+										</div>
+
+
+
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
+										Cancelar
+									</button>
+									<input type="submit" value="Editar" class="btn btn-primary float-right">
+
+								</div>
+								</form>
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
     </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

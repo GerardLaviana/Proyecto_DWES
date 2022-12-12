@@ -15,7 +15,7 @@
         <div class="insert-menu" th:insert="menu::menu"></div>
 
 		<table class="table  table-hover tabla-ingredientes">
-			<thead class="table-dark bg-info text-white  ">
+			<thead class="table-dark text-white  ">
 				<tr>
 					<th scope="col"> Id </th>
 					<th scope="col"> Nombre </th>
@@ -30,27 +30,27 @@
 				</tr>
 				<tr th:each="ingrediente : ${listaIngre}">
 
-					<td>
+					<td class="align-middle">
 						<a class="btn btn-outline-dark" th:href="@{/ingredientes/{id}(id=${ingrediente.id})}">
 							<span th:text="${ingrediente.id}">Id</span>
 						</a>
 					</td>
 
-					<td>
+					<td class="align-middle">
 						<span th:text="${ingrediente.nombre}"> Nombre </span>
 					</td>
 
-					<td>
+					<td class="align-middle">
 						<span th:text="${ingrediente.tipo}"> Tipo </span>
 					</td>
 					
-					<td>
+					<td class="align-middle">
 						<span th:text="${ingrediente.gluten}"> Gluten </span>
 					</td>
 					
-					<td>
+					<td class="align-middle">
 						<a class="btn btn-danger btn-sm text-white pointer" style="cursor:pointer" data-toggle="modal"
-							data-target="#modal-delete" th:attr="data-target='#modal-delete'+${ingrediente.id}">x</a>
+							data-target="#modal-delete" th:attr="data-target='#modal-delete'+${ingrediente.id}">Borrar</a>
 					</td>
 
 					<!--delete modal-->
@@ -92,11 +92,10 @@
 
 		<div class="col-2 float-right">
 			<div class="p-5">
-				<button type="button" class="btn btn-primary float-right" data-toggle="modal"
+				<button type="button" class="btn btn-outline-dark float-right" data-toggle="modal"
 					data-target="#crearMensaje">
 					+
 				</button>
-
 			</div>
 		</div>
 
@@ -104,7 +103,7 @@
 		
 		<div class="modal fade" id="crearMensaje" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 			aria-hidden="true">
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="exampleModalLabel">Nuevo Ingrediente</h4>
@@ -119,24 +118,22 @@
 					<form action="#" th:action="@{/ingredientes/add}" th:object="${ingredienteaAdd}" method="post">
 						<div class="modal-body">
 							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Nombre</label>
+								<div class="form-group col-md-6">
+									<label class="p-0 ml-0" for="texto">Nombre</label>
 									<input type="text" th:field="*{nombre}" class="form-control" id="exampleInputEmail1"
 										placeholder="Nombre" />
 
 								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Tipo</label>
+								<div class="form-group  col-md-5">
+									<label class="p-0 ml-0" for="texto">Tipo</label>
 									<input type="text" th:field="*{tipo}" class="form-control" id="exampleInputEmail1"
-										placeholder="Tipo" />
+										placeholder="Ex: Cereal" />
 
 								</div>
 							</div>
 							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Gluten</label>
+								<div class="form-group">
+									<label class="p-0 ml-0" for="texto">Gluten</label>
 									<input type="checkbox" th:field="*{gluten}" class="form-control" id="exampleInputEmail1"
 										value="1" />
 
@@ -145,7 +142,7 @@
 						</div>
 
 						<div class="modal-footer">
-							<input type="submit" value="Añadir" class="btn btn-primary float-right">
+							<input type="submit" value="Añadir" class="btn btn-outline-success float-right">
 							<button data-dismiss="modal"
 								class="btn btn-outline-danger float-right mr-2">Cancelar</button>
 						</div>

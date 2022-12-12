@@ -14,8 +14,8 @@
     <div class="padre">
         <div class="insert-menu" th:insert="menu::menu"></div>
 
-		<table class="table  table-hover tabla-usuarios">
-			<thead class="table-dark bg-info text-white  ">
+		<table class="table table-hover tabla-usuarios">
+			<thead class="table-dark text-white  ">
 				<tr>
 					<th scope="col"> Id </th>
 					<th scope="col"> Nombre </th>
@@ -30,27 +30,27 @@
 				</tr>
 				<tr th:each="usuario : ${listaUsuarios}">
 
-					<td>
+					<td class="align-middle">
 						<a class="btn btn-outline-dark" th:href="@{/usuarios/{id}(id=${usuario.id})}">
 							<span th:text="${usuario.id}">Id</span>
 						</a>
 					</td>
 
-					<td>
+					<td class="align-middle">
 						<span th:text="${usuario.nombre}"> Nombre </span>
 					</td>
 
-					<td>
+					<td class="align-middle">
 						<span th:text="${usuario.email}"> Email </span>
 					</td>
 					
-					<td>
+					<td class="align-middle">
 						<span th:text="${usuario.admin}"> Admin </span>
 					</td>
 					
-					<td>
+					<td class="align-middle">
 						<a class="btn btn-danger btn-sm text-white pointer" style="cursor:pointer" data-toggle="modal"
-							data-target="#modal-delete" th:attr="data-target='#modal-delete'+${usuario.id}">x</a>
+							data-target="#modal-delete" th:attr="data-target='#modal-delete'+${usuario.id}">Borrar</a>
 					</td>
 
 					<!--delete modal-->
@@ -92,7 +92,7 @@
 
 		<div class="col-2 float-right">
 			<div class="p-5">
-				<button type="button" class="btn btn-primary float-right" data-toggle="modal"
+				<button type="button" class="btn btn-outline-dark float-right" data-toggle="modal"
 					data-target="#crearMensaje">
 					+
 				</button>
@@ -104,7 +104,7 @@
 		
 		<div class="modal fade" id="crearMensaje" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 			aria-hidden="true">
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="exampleModalLabel">Nuevo Usuario</h4>
@@ -117,34 +117,31 @@
 
 
 					<form action="#" th:action="@{/usuarios/add}" th:object="${usuarioaAdd}" method="post">
-						<div class="modal-body">
+						<div class="modal-body m-0 p-0">
 							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Nombre</label>
+								<div class="form-group  col-md-6">
+									<label class="p-0 ml-0" for="texto">Nombre</label>
 									<input type="text" th:field="*{nombre}" class="form-control" id="exampleInputEmail1"
 										placeholder="Nombre" />
 
 								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Contraseña</label>
+								<div class="form-group  col-md-5">
+									<label class="p-0 ml-0" for="texto">Contraseña</label>
 									<input type="password" th:field="*{password}" class="form-control" id="exampleInputEmail1"
 										/>
 
 								</div>
 							</div>
 							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Email</label>
+								<div class="form-group  col-md-7">
+									<label class="p-0 ml-0" for="texto">Email</label>
 									<input type="text" th:field="*{email}" class="form-control" id="exampleInputEmail1"
 										placeholder="example@gmail.com" />
 
 								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Admin</label>
+							
+								<div class="form-group  col-md-4">
+									<label class="p-0 ml-0" for="texto">Admin</label>
 									<input type="checkbox" th:field="*{admin}" class="form-control" id="exampleInputEmail1"
 										value="1" />
 
@@ -153,7 +150,7 @@
 						</div>
 
 						<div class="modal-footer">
-							<input type="submit" value="Añadir" class="btn btn-primary float-right">
+							<input type="submit" value="Añadir" class="btn btn-outline-success float-right">
 							<button data-dismiss="modal"
 								class="btn btn-outline-danger float-right mr-2">Cancelar</button>
 						</div>

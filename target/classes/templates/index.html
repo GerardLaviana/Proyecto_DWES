@@ -28,7 +28,7 @@
                         <img src="../img/receta1.jpg">
                     </div>
                     <div class="titulo-tarjeta">
-                        <h2 th:text="${receta.nombre}">Titulo de la receta</h2>
+                        <a th:href="@{/{id}(id=${receta.id})}" class="text-white"><h2 th:text="${receta.nombre}">Titulo de la receta</h2></a>
                         <p>Valoración: <i class="fa-solid fa-star"></i> <span th:text="${receta.valoracion}"></p>
                         <p>Tipo: <span th:text="${receta.tipo}"></p>
                         <p>Origen: <span th:text="${receta.origen}"></p>
@@ -45,7 +45,7 @@
         
         <div class="modal fade" id="crearMensaje" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 			aria-hidden="true">
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="exampleModalLabel">Nueva Receta</h4>
@@ -56,59 +56,54 @@
 
 
 					<form action="#" th:action="@{/add}" th:object="${recetaNueva}" method="post">
-						<div class="modal-body">
+						<div class="modal-body p-0">
 							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Nombre de la Receta</label>
+								<div class="form-group col-md-7">
+									<label class="p-0 ml-0" for="texto">Nombre de la Receta</label>
 									<input type="text" th:field="*{nombre}" class="form-control" id="exampleInputEmail1"
 										placeholder="Nombre de la receta" />
 								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Valoración de la Receta</label>
-									<input type="number" step="0.5" th:field="*{valoracion}" class="form-control" id="exampleInputEmail1"
+								<div class="form-group col-md-4">
+									<label class="p-0 ml-0" for="texto">Valoración de la Receta</label>
+									<input type="number" step="0.5" min="0" max="5" th:field="*{valoracion}" class="form-control" id="exampleInputEmail1"
 										placeholder="4.5" />
 								</div>
 							</div>
 							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Duracion de la Receta</label>
-									<input type="number" th:field="*{duracion}" class="form-control" id="exampleInputEmail1"
+								<div class="form-group col-md-4">
+									<label class="p-0 ml-0" for="texto">Duracion de la Receta</label>
+									<input type="number" min="0" step="5" th:field="*{duracion}" class="form-control" id="exampleInputEmail1"
 										placeholder="15" />
 								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Tipo de Receta</label>
+								<div class="form-group col-md-7">
+									<label class="p-0 ml-0" for="texto">Tipo de Receta</label>
 									<input type="text" th:field="*{tipo}" class="form-control" id="exampleInputEmail1"
 										placeholder="Cena" />
 								</div>
 							</div>
-							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Origen de la Receta</label>
+							<div class="form-row align-items-center">
+								<div class="form-group col-md-4">
+									<label class="p-0 ml-0" for="texto">Origen de la Receta</label>
 									<input type="text" th:field="*{origen}" class="form-control" id="exampleInputEmail1"
 										placeholder="España" />
 								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Pasos de la Receta</label>
+								<div class="form-group col-md-7">
+									<label class="p-0 ml-0" for="texto">Pasos de la Receta</label>
 									<textarea th:field="*{instrucciones}" class="form-control" id="exampleInputEmail1"
 										placeholder="Pasos de la receta" />
 								</div>
 							</div>
 							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Dificultad de la Receta</label>
-									<input type="text" th:field="*{dificultad}" class="form-control" id="exampleInputEmail1"
-										placeholder="Dificultad de la receta" />
+								<div class="form-group col-md-4">
+									<label class="p-0 ml-0" for="texto">Dificultad de la Receta</label>
+									<select th:field="*{dificultad}" class="form-control" id="exampleFormControlSelect1">
+										<option th:text="Fácil" value="Fácil"></option>
+										<option th:text="Media" value="Media"></option>
+										<option th:text="Difícil" value="Difícil"></option>
+									</select>
 								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Seleccionar Usuario</label>
+								<div class="form-group col-md-7">
+									<label class="p-0 ml-0" for="texto">Seleccionar Usuario</label>
 									<select th:field="*{usuario.id}" class="form-control" id="exampleFormControlSelect1">
 										<option th:each="usuario : ${listaUsuarios}" th:value="${usuario.id}"
 											th:text="${usuario.nombre}" value="">SeleccionarUsuario</option>
@@ -118,8 +113,8 @@
 							</div>
 							
 							<div class="form-row">
-								<div class="form-group  mt-4">
-									<label for="texto">Seleccionar ingredientes</label>
+								<div class="form-group col-md-12">
+									<label class="p-0 ml-0" for="texto">Seleccionar ingredientes</label>
 									<select th:field="*{ingredientes}" multiple="multiple" class="form-control selectpicker" name="ingredientes" id="exampleFormControlSelect1">
 										<option th:each="ingrediente : ${listaIngre}" th:value="${ingrediente.id}"
 											th:text="${ingrediente.nombre}" value="">Seleccionar Ingrediente</option>
@@ -130,7 +125,7 @@
 						</div>
 
 						<div class="modal-footer">
-							<input type="submit" value="Añadir" class="btn btn-primary float-right">
+							<input type="submit" value="Añadir" class="btn btn-outline-success">
 							<button data-dismiss="modal"
 								class="btn btn-outline-danger float-right mr-2">Cancelar</button>
 						</div>

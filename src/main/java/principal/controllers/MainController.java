@@ -54,18 +54,11 @@ public class MainController {
 	String idReceta(Model model, @PathVariable(name = "id") Integer id) {
 		
 		Receta recetaMostrar = recetaRepo.findById(id).get();
+		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) usuRepo.findAll();
+		ArrayList<Ingrediente> misIgre = (ArrayList<Ingrediente>) ingreRepo.findAll();
 		model.addAttribute("recetaMostrar", recetaMostrar);
-		/*
-		ArrayList<Pedido> misPedidos = (ArrayList<Pedido>) pedidoRepo.findAll();
-		ArrayList<Alumno> alumnos = (ArrayList<Alumno>) alumnoRepo.findAll();
-		ArrayList<Bocadillo> bocas = (ArrayList<Bocadillo>) bocaRepo.findAll();
-		
-
-		// En el template de alumnos imprimir tabla de alumnos
-		model.addAttribute("listaPedidos", misPedidos);
-		model.addAttribute("alumnos", alumnos);
-		model.addAttribute("ListaBoca", bocas);
-		*/
+		model.addAttribute("listaUsuarios", misUsuarios);
+		model.addAttribute("listaIngre", misIgre);
 		return "receta";
 	}
 
@@ -88,5 +81,35 @@ public class MainController {
         recetaRepo.save(recetaNueva);
         return "redirect:/";   
     }
+	
+	@PostMapping(value={"/edit/{id}"})
+	public String editReceta(@PathVariable(name="id") Integer id, @ModelAttribute("recetaMostrar") Receta recetaEditada, BindingResult binding ) {
+		
+		Receta recetaAEditar = recetaRepo.findById(id).get();
+		
+		for (Ingrediente ingre : recetaAEditar.getIngredientes()) {
+			if(!recetaEditada.getIngredientes().contains(ingre)) {
+				ingre.getRecetas().remove(recetaAEditar);
+			}
+		}
+		
+		for (Ingrediente ingreNuevo : recetaEditada.getIngredientes()) {
+			if(!recetaAEditar.getIngredientes().contains(ingreNuevo)) {
+				ingreNuevo.getRecetas().add(recetaEditada);
+			}
+		}
+		
+		recetaRepo.save(recetaEditada);
+		
+		return "redirect:/";
+	}
+	
+	@GetMapping(value={"/delete/{id}"})
+	String deleteReceta(@PathVariable(name="id") Integer id) {
+		Receta recetaABorrar = recetaRepo.findById(id).get();
+		recetaRepo.delete(recetaABorrar);
+		
+		return "redirect:/";
+	}
 	
 }

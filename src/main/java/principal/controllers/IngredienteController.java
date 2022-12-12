@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import principal.model.Ingrediente;
 import principal.model.Receta;
-import principal.model.Usuario;
 import principal.persistencia.IngredienteRepo;
 import principal.persistencia.RecetaRepo;
-import principal.persistencia.UsuarioRepo;
 
 @RequestMapping("/ingredientes")
 @Controller
@@ -27,9 +25,6 @@ public class IngredienteController {
 	RecetaRepo recetaRepo;
 	
 	@Autowired
-	UsuarioRepo usuRepo;
-	
-	@Autowired
 	IngredienteRepo ingreRepo;
 	
 	@GetMapping(value = { "", "/" })
@@ -37,12 +32,10 @@ public class IngredienteController {
 
 		// Buscar a la BBDD
 		ArrayList<Receta> misRecetas = (ArrayList<Receta>) recetaRepo.findAll();
-		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) usuRepo.findAll();
 		ArrayList<Ingrediente> misIgre = (ArrayList<Ingrediente>) ingreRepo.findAll();
 
 		// En el template de alumnos imprimir tabla de alumnos
 		model.addAttribute("listaRecetas", misRecetas);
-		model.addAttribute("listaUsuarios", misUsuarios);
 		model.addAttribute("listaIngre", misIgre);
 		
 		model.addAttribute("ingredienteaAdd", new Ingrediente());
