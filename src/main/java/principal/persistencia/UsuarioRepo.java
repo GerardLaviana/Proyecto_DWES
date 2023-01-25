@@ -8,5 +8,5 @@ import principal.model.Usuario;
 
 public interface UsuarioRepo extends JpaRepository<Usuario, Integer>{
 
-	public Optional<Usuario> findByNombre(String name);
+	public Optional<Usuario> findByUsername(String name);
 }

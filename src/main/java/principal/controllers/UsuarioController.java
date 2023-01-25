@@ -3,6 +3,8 @@ package principal.controllers;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,26 +15,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import principal.model.Receta;
+import principal.model.Rol;
 import principal.model.Usuario;
-import principal.persistencia.RecetaRepo;
-import principal.persistencia.UsuarioRepo;
+import principal.servicios.impl.RecetaServiceImpl;
+import principal.servicios.impl.UsuarioServiceImpl;
 
 @RequestMapping("/usuarios")
 @Controller
 public class UsuarioController {
 
 	@Autowired
-	RecetaRepo recetaRepo;
+	private RecetaServiceImpl receServiceImpl;
 	
 	@Autowired
-	UsuarioRepo usuRepo;
+    private UsuarioServiceImpl userServiceImpl;
 	
 	@GetMapping(value = { "", "/" })
 	String homeUsuario(Model model) {
 
 		// Buscar a la BBDD
-		ArrayList<Receta> misRecetas = (ArrayList<Receta>) recetaRepo.findAll();
-		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) usuRepo.findAll();
+		ArrayList<Receta> misRecetas = (ArrayList<Receta>) receServiceImpl.listarRecetas();
+		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) userServiceImpl.listarUsuarios();
 
 		// En el template de alumnos imprimir tabla de alumnos
 		model.addAttribute("listaRecetas", misRecetas);
@@ -46,7 +49,7 @@ public class UsuarioController {
 	@GetMapping(value = { "/{id}" })
 	String idUsuario(Model model, @PathVariable(name = "id") Integer id) {
 		
-		Usuario usuMostrar = usuRepo.findById(id).get();
+		Usuario usuMostrar = userServiceImpl.obtenerUsuarioPorId(id);
 		model.addAttribute("usuMostrar", usuMostrar);
 		model.addAttribute("usuaEditar", new Usuario());
 		return "usuario";
@@ -58,27 +61,44 @@ public class UsuarioController {
         for(Receta re: usuNuevo.getRecetas()) {
             re.setUsuario(usuNuevo);
         }
-        usuRepo.save(usuNuevo);
+        userServiceImpl.insertarUsuario(usuNuevo);
         return "redirect:/usuarios";   
     }
 	
-	@GetMapping(value={"/delete/{id}"})
-	String deleteUsuario(@PathVariable(name="id") Integer id) {
-		Usuario usuABorrar = usuRepo.findById(id).get();
-		usuRepo.delete(usuABorrar);
-		
-		return "redirect:/usuarios";
-	}
+	
+	@GetMapping("/delete/{id}")
+    String deleteUser(@PathVariable(name = "id") Integer id) {
+    	if(isAdmin()) {
+    		Usuario usuarioAEliminar = userServiceImpl.obtenerUsuarioPorId(id);
+    		userServiceImpl.eliminarUsuario(usuarioAEliminar);
+    	}
+    	return "redirect:/usuarios";
+    }
+ 
+    public boolean isAdmin() {
+    	Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	UserDetails usuDetails = null;
+    	if(auth instanceof UserDetails) {
+    		usuDetails = (UserDetails) auth;
+    		Usuario u = userServiceImpl.obtenerUsuarioPorUsername(usuDetails.getUsername());
+    		for(Rol r : u.getRoles()){
+    			if(r.getNombre().compareTo("ROLE_ADMIN") == 0){
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
 	
 	@PostMapping(value={"/edit/{id}"})
 	public String editUsu(@PathVariable(name="id") Integer id, @ModelAttribute("usuaEditar") Usuario usuEditado, BindingResult binding ) {
 		
-		Usuario usuaEditar = usuRepo.findById(id).get();
-		usuaEditar.setNombre(usuEditado.getNombre());
+		Usuario usuaEditar = userServiceImpl.obtenerUsuarioPorId(id);
+		usuaEditar.setUsername(usuEditado.getUsername());
 		usuaEditar.setPassword(usuEditado.getPassword());
 		usuaEditar.setEmail(usuEditado.getEmail());
 		usuaEditar.setAdmin(usuEditado.isAdmin());
-		usuRepo.save(usuaEditar);
+		userServiceImpl.insertarUsuario(usuaEditar);
 		
 		return "redirect:/usuarios";
 	}

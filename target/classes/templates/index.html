@@ -17,7 +17,7 @@
         <section class="section">
             <div>
                 <h1>¡Bienvenido a La Espatula!</h1>
-                <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#crearMensaje">+</button>
+                <button sec:authorize="isAuthenticated()" type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#crearMensaje">+</button>
             </div>
             <div class="tarjetas">
             	<div th:if="${listaRecetas.empty}">
@@ -37,7 +37,7 @@
                     </div>
                     <div class="usuario-tarjeta">
                         <p th:text="${receta.fecha}">Fecha</p>
-                        <p th:text="${receta.usuario.nombre}">Usuario</p>
+                        <p th:text="${receta.usuario.username}">Usuario</p>
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@
 									<label class="p-0 ml-0" for="texto">Seleccionar Usuario</label>
 									<select th:field="*{usuario.id}" class="form-control" id="exampleFormControlSelect1">
 										<option th:each="usuario : ${listaUsuarios}" th:value="${usuario.id}"
-											th:text="${usuario.nombre}" value="">SeleccionarUsuario</option>
+											th:text="${usuario.username}" value="">SeleccionarUsuario</option>
 									</select>
 
 								</div>

@@ -18,7 +18,7 @@
 			<thead class="table-dark text-white  ">
 				<tr>
 					<th scope="col"> Id </th>
-					<th scope="col"> Nombre </th>
+					<th scope="col"> UserName </th>
 					<th scope="col"> Email </th>
 					<th scope="col"> Admin </th>
 					<th scope="col"> Borrar </th>
@@ -37,7 +37,7 @@
 					</td>
 
 					<td class="align-middle">
-						<span th:text="${usuario.nombre}"> Nombre </span>
+						<span th:text="${usuario.username}"> Nombre </span>
 					</td>
 
 					<td class="align-middle">
@@ -65,7 +65,7 @@
 								</div>
 								<div class="modal-body">
 									<p class="error-text"><strong>¿Seguro que deseas borrar el usuario 
-											<span th:text="${usuario.nombre}"></span>?</strong></p>
+											<span th:text="${usuario.username}"></span>?</strong></p>
 								</div>
 								<div class="modal-footer">
 									<button class="btn btn-secondary btn-sm" data-dismiss="modal" aria-hidden="true">
@@ -113,16 +113,13 @@
 						</button>
 					</div>
 
-
-
-
 					<form action="#" th:action="@{/usuarios/add}" th:object="${usuarioaAdd}" method="post">
 						<div class="modal-body m-0 p-0">
 							<div class="form-row">
 								<div class="form-group  col-md-6">
 									<label class="p-0 ml-0" for="texto">Nombre</label>
-									<input type="text" th:field="*{nombre}" class="form-control" id="exampleInputEmail1"
-										placeholder="Nombre" />
+									<input type="text" th:field="*{username}" class="form-control" id="exampleInputEmail1"
+										placeholder="Nickname" />
 
 								</div>
 								<div class="form-group  col-md-5">

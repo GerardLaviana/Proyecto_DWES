@@ -22,7 +22,7 @@
 								<div class="card-header text-dark bg-light m-0">Datos del usuario</div>
 								<div class="card-body">
 									<div class="mb-2">
-										<h5 class="mb-2 card-text" th:text="*{nombre}">Nombre del Usuario</h5>
+										<h5 class="mb-2 card-text" th:text="*{username}">Nickname del Usuario</h5>
 										<p class="mb-2 card-text">Email: <span th:text="*{email}"></p>
 										<p class="mb-2 card-text">Contraseña: <span th:text="*{password}"></p>
 										<p class="mb-2 card-text">Administrador: <span th:text="*{admin}"></p>
@@ -63,7 +63,7 @@
 								</div>
 								<div class="modal-body">
 									<p class="error-text">Introduce nombre nuevo para el usuario:
-										<strong><span th:text="${usuMostrar.nombre}"></span></strong>
+										<strong><span th:text="${usuMostrar.username}"></span></strong>
 									</p>
 
 
@@ -73,7 +73,7 @@
 										<div class="form-row">
 											<div class="form-group col-md-6">
 												<label class="p-0 ml-0" for="texto">Nombre</label>
-												<input type="text" th:field="*{nombre}" th:placeholder="${usuMostrar.nombre}" class="form-control" id="exampleInputEmail1"
+												<input type="text" th:field="*{username}" th:placeholder="${usuMostrar.username}" class="form-control" id="exampleInputEmail1"
 												/>
 			
 											</div>

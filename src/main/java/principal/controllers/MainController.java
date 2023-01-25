@@ -3,6 +3,8 @@ package principal.controllers;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,30 +17,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import principal.model.Ingrediente;
 import principal.model.Receta;
 import principal.model.Usuario;
-import principal.persistencia.IngredienteRepo;
-import principal.persistencia.RecetaRepo;
-import principal.persistencia.UsuarioRepo;
+import principal.servicios.impl.IngredienteServiceImpl;
+import principal.servicios.impl.RecetaServiceImpl;
+import principal.servicios.impl.UsuarioServiceImpl;
+
 
 @RequestMapping("/")
 @Controller
 public class MainController {
 
 	@Autowired
-	RecetaRepo recetaRepo;
+	private RecetaServiceImpl receServiceImpl;
 	
 	@Autowired
-	UsuarioRepo usuRepo;
+	private UsuarioServiceImpl userServiceImpl;
 	
 	@Autowired
-	IngredienteRepo ingreRepo;
+	private IngredienteServiceImpl ingreServiceImpl;
 	
 	@GetMapping(value = { "", "/" })
 	String home(Model model) {
 
 		// Buscar a la BBDD
-		ArrayList<Receta> misRecetas = (ArrayList<Receta>) recetaRepo.findAll();
-		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) usuRepo.findAll();
-		ArrayList<Ingrediente> misIgre = (ArrayList<Ingrediente>) ingreRepo.findAll();
+		ArrayList<Receta> misRecetas = (ArrayList<Receta>) receServiceImpl.listarRecetas();
+		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) userServiceImpl.listarUsuarios();
+		ArrayList<Ingrediente> misIgre = (ArrayList<Ingrediente>) ingreServiceImpl.listarIngredientes();
 
 		// En el template de alumnos imprimir tabla de alumnos
 		model.addAttribute("listaRecetas", misRecetas);
@@ -53,20 +56,36 @@ public class MainController {
 	@GetMapping(value = { "/{id}" })
 	String idReceta(Model model, @PathVariable(name = "id") Integer id) {
 		
-		Receta recetaMostrar = recetaRepo.findById(id).get();
-		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) usuRepo.findAll();
-		ArrayList<Ingrediente> misIgre = (ArrayList<Ingrediente>) ingreRepo.findAll();
+		Receta recetaMostrar = receServiceImpl.obtenerRecetaPorId(id);
+		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) userServiceImpl.listarUsuarios();
+		ArrayList<Ingrediente> misIgre = (ArrayList<Ingrediente>) ingreServiceImpl.listarIngredientes();
+		//boolean editable = isEditable(recetaMostrar.getUsuario().getUsername());
 		model.addAttribute("recetaMostrar", recetaMostrar);
 		model.addAttribute("listaUsuarios", misUsuarios);
 		model.addAttribute("listaIngre", misIgre);
+		//model.addAttribute("isEditable",editable);
 		return "receta";
 	}
+	
+	
+	/**
+	public boolean isEditable(String nombreUsu) {
+    	Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	UserDetails usuDetails = null;
+    	if(auth instanceof UserDetails) {
+    		usuDetails = (UserDetails) auth;
+    		if(usuDetails.getUsername()==nombreUsu){
+    			return true;
+    		}
+    	}
+    	return false;
+    }*/
 
 	@PostMapping("/add")
     public String addReceta( @ModelAttribute("recetaNueva") Receta recetaNueva,   BindingResult bindingResult) {        
        
        //Alumno alumnoNuevo = alumDAO.buscarAlumnoHibernate(pedidoNuevo.getAlumno().getId());
-       Usuario usuarioNuevo = usuRepo.findById(recetaNueva.getUsuario().getId()).get();
+       Usuario usuarioNuevo = userServiceImpl.obtenerUsuarioPorId(recetaNueva.getUsuario().getId());
        
        usuarioNuevo.getRecetas().add(recetaNueva);
        recetaNueva.setUsuario(usuarioNuevo);
@@ -78,14 +97,14 @@ public class MainController {
             i.getRecetas().add(recetaNueva);
             //bocaDAO.modificarBocadilloHibernate(b);
         }
-        recetaRepo.save(recetaNueva);
+        receServiceImpl.insertarReceta(recetaNueva);
         return "redirect:/";   
     }
 	
 	@PostMapping(value={"/edit/{id}"})
 	public String editReceta(@PathVariable(name="id") Integer id, @ModelAttribute("recetaMostrar") Receta recetaEditada, BindingResult binding ) {
 		
-		Receta recetaAEditar = recetaRepo.findById(id).get();
+		Receta recetaAEditar = receServiceImpl.obtenerRecetaPorId(id);
 		
 		for (Ingrediente ingre : recetaAEditar.getIngredientes()) {
 			if(!recetaEditada.getIngredientes().contains(ingre)) {
@@ -99,16 +118,14 @@ public class MainController {
 			}
 		}
 		
-		recetaRepo.save(recetaEditada);
+		receServiceImpl.insertarReceta(recetaEditada);
 		
 		return "redirect:/";
 	}
 	
 	@GetMapping(value={"/delete/{id}"})
 	String deleteReceta(@PathVariable(name="id") Integer id) {
-		Receta recetaABorrar = recetaRepo.findById(id).get();
-		recetaRepo.delete(recetaABorrar);
-		
+		receServiceImpl.eliminarRecetaPorId(id);
 		return "redirect:/";
 	}
 	

@@ -1,28 +1,38 @@
 package principal.model;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+public class Usuario implements UserDetails{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
 
-	@Column(name = "nombre")
-	private String nombre;
+	@Column(name = "username")
+	private String username;
 
 	@Column(name = "password")
 	private String password;
@@ -35,18 +45,28 @@ public class Usuario {
 
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
 	private Set<Receta> recetas;
+	
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(
+			name = "usuarios_roles",
+			joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "rol_id", referencedColumnName = "id")
+			)
+	private Collection<Rol> roles;
 
 	public Usuario() {
 		this.admin = false;
 		this.recetas = new HashSet<Receta>();
+		this.roles = new HashSet<Rol>();
 	}
 
-	public Usuario(String nombreUsuario, String password, String email) {
-		this.nombre = nombreUsuario;
+	public Usuario(String username, String password, String email) {
+		this.username = username;
 		this.password = password;
 		this.email = email;
 		this.admin = false;
 		this.recetas = new HashSet<Receta>();
+		this.roles = new HashSet<Rol>();
 	}
 
 	public int getId() {
@@ -57,12 +77,12 @@ public class Usuario {
 		this.id = id;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setNombre(String nombreUsuario) {
-		this.nombre = nombreUsuario;
+	public void setUsername(String nombreUsuario) {
+		this.username = nombreUsuario;
 	}
 
 	public String getPassword() {
@@ -97,16 +117,42 @@ public class Usuario {
 		this.recetas = recetas;
 	}
 
+	public Collection<Rol> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection<Rol> roles) {
+		this.roles = roles;
+	}
+
 	@Override
-	public String toString() {
-		String resultado = "Usuario [id =" + id + ", nombre =" + nombre + ", password =" + password + ", email =" + email
-				+ ", admin =" + admin + ", recetas =";
-		
-		for (Receta receta : this.recetas) {
-			resultado = resultado + "\n" +receta.toString();
-		}
-		resultado = resultado + "]\n";
-		return resultado;
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getNombre())).collect(Collectors.toList());
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

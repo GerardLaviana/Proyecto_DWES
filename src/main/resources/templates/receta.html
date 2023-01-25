@@ -37,16 +37,16 @@
 											<p class="mb-2 card-text">Dificultad: <span class="m-0" th:text="*{dificultad}"></p>
 											<p class="mb-2 card-text">Pasos a seguir: <span class="m-0" th:text="*{instrucciones}">
 											</p>
-											<p class="mb-2 card-text">Usuario: <a class="m-0 text-dark" th:href="@{/usuarios/{id}(id=${recetaMostrar.usuario.id})}" th:text="*{usuario.nombre}"/></p>
+											<p class="mb-2 card-text">Usuario: <a class="m-0 text-dark" th:href="@{/usuarios/{id}(id=${recetaMostrar.usuario.id})}" th:text="*{usuario.username}"/></p>
 											<p class="mb-2 card-text">Ingredientes: <a
 													th:each="ingre : *{ingredientes}" class="text-dark m-0" th:href="@{/ingredientes/{id}(id=${ingre.id})}" th:text="${ingre.nombre}" /></p>
 										</div>
 									</div>
 									<div class="d-flex flex-row">
-										<p><a class="btn btn-secondary text-white" style="cursor:pointer"
+										<p><a sec:authorize="isAuthenticated()" class="btn btn-secondary text-white" style="cursor:pointer"
 												data-toggle="modal" data-target="#modal-edit"
 												th:attr="data-target='#modal-edit'+${recetaMostrar.id}">Editar</a></p>
-										<p><a th:href="@{/delete/{id}(id=${recetaMostrar.id})}"
+										<p><a th:if="${editable}" sec:authorize="isAuthenticated()" th:href="@{/delete/{id}(id=${recetaMostrar.id})}"
 												class="btn btn-danger">Eliminar</a></p>
 										<p><a th:href="@{/}" class="btn btn-dark text-white">Cerrar</a></p>
 									</div>
@@ -130,7 +130,7 @@
 									<select th:field="*{usuario.id}" class="form-control"
 										id="exampleFormControlSelect1">
 										<option th:each="usuario : ${listaUsuarios}" th:selected="selected"
-											th:value="${usuario.id}" th:text="${usuario.nombre}" value="">
+											th:value="${usuario.id}" th:text="${usuario.username}" value="">
 											SeleccionarUsuario</option>
 									</select>
 								</div>

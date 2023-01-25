@@ -21,7 +21,7 @@
 					<th scope="col"> Nombre </th>
 					<th scope="col"> Tipo </th>
 					<th scope="col"> Gluten </th>
-					<th scope="col"> Borrar </th>
+					<th scope="col" sec:authorize="hasAuthority('ROLE_ADMIN')"> Borrar </th>
 				</tr>
 			</thead>
 			<tbody>
@@ -48,7 +48,7 @@
 						<span th:text="${ingrediente.gluten}"> Gluten </span>
 					</td>
 					
-					<td class="align-middle">
+					<td class="align-middle" sec:authorize="hasAuthority('ROLE_ADMIN')">
 						<a class="btn btn-danger btn-sm text-white pointer" style="cursor:pointer" data-toggle="modal"
 							data-target="#modal-delete" th:attr="data-target='#modal-delete'+${ingrediente.id}">Borrar</a>
 					</td>
@@ -90,7 +90,7 @@
 		</table>
 
 
-		<div class="col-2 float-right">
+		<div sec:authorize="isAuthenticated()" class="col-2 float-right">
 			<div class="p-5">
 				<button type="button" class="btn btn-outline-dark float-right" data-toggle="modal"
 					data-target="#crearMensaje">

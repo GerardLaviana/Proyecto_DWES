@@ -11,8 +11,16 @@
                 <div class="descarga">
                     <nav class="nav">
                         <a href="/ingredientes">Ingredientes</a>
-                        <a href="/usuarios" >Usuarios</a>
-                    </nav>
+                        <a sec:authorize="hasAuthority('ROLE_ADMIN')" href="/usuarios" >Usuarios</a>
+						<li sec:authorize="isAnonymous()" class="m-0 p-0">
+							<a class="btn btn-outline-light" style="padding-left: 5px;padding-right: 5px;" href="/login">Login</a>
+						</li>
+						<li sec:authorize="isAuthenticated()" class="m-0 p-0">
+							<form th:action="@{/logout}" style="margin:5px" class="p-0" method="post">
+								<input class="btn btn-outline-danger" type="submit" value="Sign Out" />
+							</form>
+						</li>
+					</nav>
                 </div>
             </div>
 </header>
