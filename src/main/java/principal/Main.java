@@ -11,8 +11,8 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		CrearTablas ct= new CrearTablas();
-		ct.creacion();
+		//CrearTablas ct= new CrearTablas();
+		//ct.creacion();
 		SpringApplication.run(Main.class, args);
 
 	}
