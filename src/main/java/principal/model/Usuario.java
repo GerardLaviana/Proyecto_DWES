@@ -22,9 +22,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "usuarios")
 public class Usuario implements UserDetails{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,11 +47,11 @@ public class Usuario implements UserDetails{
 	@Column(name = "email")
 	private String email;
 
-	@Column(name = "admin")
-	private boolean admin;
-
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
 	private Set<Receta> recetas;
+	
+	@OneToMany(mappedBy="usuario", fetch = FetchType.EAGER )
+	private Set<Comentario> comentarios;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
@@ -55,8 +62,8 @@ public class Usuario implements UserDetails{
 	private Collection<Rol> roles;
 
 	public Usuario() {
-		this.admin = false;
 		this.recetas = new HashSet<Receta>();
+		this.comentarios = new HashSet<Comentario>();
 		this.roles = new HashSet<Rol>();
 	}
 
@@ -64,8 +71,8 @@ public class Usuario implements UserDetails{
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		this.admin = false;
 		this.recetas = new HashSet<Receta>();
+		this.comentarios = new HashSet<Comentario>();
 		this.roles = new HashSet<Rol>();
 	}
 
@@ -101,20 +108,20 @@ public class Usuario implements UserDetails{
 		this.email = email;
 	}
 
-	public boolean isAdmin() {
-		return admin;
-	}
-
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
-	}
-
 	public Set<Receta> getRecetas() {
 		return recetas;
 	}
 
 	public void setRecetas(Set<Receta> recetas) {
 		this.recetas = recetas;
+	}
+	
+	public Set<Comentario> getComentarios() {
+		return comentarios;
+	}
+
+	public void setComentarios(Set<Comentario> comentarios) {
+		this.comentarios = comentarios;
 	}
 
 	public Collection<Rol> getRoles() {
@@ -126,30 +133,35 @@ public class Usuario implements UserDetails{
 	}
 
 	@Override
+	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
 		return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getNombre())).collect(Collectors.toList());
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isAccountNonExpired() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isAccountNonLocked() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isCredentialsNonExpired() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return true;

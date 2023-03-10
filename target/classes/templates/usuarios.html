@@ -20,7 +20,6 @@
 					<th scope="col"> Id </th>
 					<th scope="col"> UserName </th>
 					<th scope="col"> Email </th>
-					<th scope="col"> Admin </th>
 					<th scope="col"> Borrar </th>
 				</tr>
 			</thead>
@@ -42,10 +41,6 @@
 
 					<td class="align-middle">
 						<span th:text="${usuario.email}"> Email </span>
-					</td>
-					
-					<td class="align-middle">
-						<span th:text="${usuario.admin}"> Admin </span>
 					</td>
 					
 					<td class="align-middle">
@@ -137,12 +132,6 @@
 
 								</div>
 							
-								<div class="form-group  col-md-4">
-									<label class="p-0 ml-0" for="texto">Admin</label>
-									<input type="checkbox" th:field="*{admin}" class="form-control" id="exampleInputEmail1"
-										value="1" />
-
-								</div>
 							</div>
 						</div>
 

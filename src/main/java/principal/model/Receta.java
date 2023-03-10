@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,9 +12,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "recetas")
@@ -50,17 +53,21 @@ public class Receta {
 
 	@ManyToOne
 	@JoinColumn(name = "id_usuario", nullable = false)
+	@JsonIgnore
 	private Usuario usuario;
 	
+	@OneToMany(mappedBy="receta", fetch = FetchType.EAGER )
+	private Set<Comentario> comentarios;
 	
-	@ManyToMany(mappedBy = "recetas", fetch = FetchType.EAGER)
-	private Set<Ingrediente> ingredientes;
+	@OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<RecetasIngredientes> ingredientes;
 
 	public Receta() {
 		this.fecha = new Date();
 		this.valoracion = 0f;
 		this.usuario = new Usuario();
-		this.ingredientes = new HashSet<Ingrediente>();
+		this.comentarios = new HashSet<Comentario>();
+		this.ingredientes = new HashSet<RecetasIngredientes>();
 	}
 
 	public Receta(String nombre, float valoracion, int duracion, String tipo, String origen, String instrucciones,
@@ -74,7 +81,8 @@ public class Receta {
 		this.dificultad = dificultad;
 		this.fecha = new Date();
 		this.usuario = new Usuario();
-		this.ingredientes = new HashSet<Ingrediente>();
+		this.comentarios = new HashSet<Comentario>();
+		this.ingredientes = new HashSet<RecetasIngredientes>();
 	}
 
 	public int getId() {
@@ -156,24 +164,63 @@ public class Receta {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+	
+	public Set<Comentario> getComentarios() {
+		return comentarios;
+	}
 
-	public Set<Ingrediente> getIngredientes() {
+	public void setComentarios(Set<Comentario> comentarios) {
+		this.comentarios = comentarios;
+	}
+
+	public Set<RecetasIngredientes> getIngredientes() {
 		return ingredientes;
 	}
 
-	public void setIngredientes(Set<Ingrediente> ingredientes) {
+	public void setIngredientes(Set<RecetasIngredientes> ingredientes) {
 		this.ingredientes = ingredientes;
 	}
 
+	public void addIngrediente(Ingrediente ingre, int cantidad) {
+	
+		RecetasIngredientes ri = new RecetasIngredientes(this, ingre, cantidad);
+		
+		if (this.ingredientes.contains(ri)) {
+			this.ingredientes.remove(ri);
+		}
+		
+		if (cantidad != 0) {
+			this.ingredientes.add(ri);
+			ingre.getRecetas().add(ri);
+		}
+		
+	}
+
+	public void removeIngrediente(Ingrediente ingre) {
+		
+		for (RecetasIngredientes ri : this.ingredientes) {
+			if (ri.getIngrediente().equals(ingre)) {
+				this.ingredientes.remove(ri);
+			}
+		}
+		
+		for (RecetasIngredientes ri : ingre.getRecetas()) {
+			if (ri.getReceta().equals(this)) {
+				ingre.getRecetas().remove(ri);
+			}
+		}
+		
+	}
+		
 	@Override
 	public String toString() {
-		
+
 		String resultado="Receta [id =" + id + ", nombre =" + nombre + ", valoracion =" + valoracion + ", fecha =" + fecha
 				+ ", duracion =" + duracion + ", tipo =" + tipo + ", origen =" + origen + ", instrucciones ="
 				+ instrucciones + ", dificultad =" + dificultad + ", ingredientes =";
 		
-		for (Ingrediente ingre : this.ingredientes) {
-			resultado = resultado +"\n"+ingre.toString();
+		for (RecetasIngredientes ingre : this.ingredientes) {
+			resultado = resultado +"\n"+ingre.getIngrediente().toString()+" Cantidad: "+ ingre.getCantidad();
 		}
 		
 		resultado = resultado + "]\n";

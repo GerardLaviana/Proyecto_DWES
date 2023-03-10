@@ -1,4 +1,4 @@
-package principal.servicios.impl;
+ package principal.servicios.impl;
 
 import java.util.List;
 
@@ -44,9 +44,5 @@ public class IngredienteServiceImpl implements IngredienteService {
 	public void eliminarIngredientePorId(Integer id) {
 		ingredienteRepo.delete(ingredienteRepo.findById(id).get());
 	}
-
 	
-
-	
-
 }

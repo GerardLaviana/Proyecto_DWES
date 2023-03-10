@@ -7,7 +7,8 @@
     <title>Espatula</title>
     <link href="../css/index.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://kit.fontawesome.com/e77e1022d8.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -19,20 +20,25 @@
 					<div class="card-body row pt-4 pb-4">
 						<div class="col-6">
 							<div class="card p-0 border-white bg-transparent">
-								<div class="card-header text-dark bg-light m-0">Datos del usuario</div>
+								<div class="card-header text-dark bg-light m-0">Datos del usuario: <span id="idAjax" th:text="*{id}"></span></div>
 								<div class="card-body">
+									<form id="formAjax" th:action="@{/usuarios/edit/{id}(id=${usuMostrar.id})}" method="post">
 									<div class="mb-2">
-										<h5 class="mb-2 card-text" th:text="*{username}">Nickname del Usuario</h5>
-										<p class="mb-2 card-text">Email: <span th:text="*{email}"></p>
+										<h5 id="respuestaNombre" class="mb-2 card-text" th:text="*{username}">Nickname del Usuario</h5>
+										<p id="respuestaEmail" class="mb-2 card-text">Email: <span th:text="*{email}"></p>
 										<p class="mb-2 card-text">Contraseña: <span th:text="*{password}"></p>
-										<p class="mb-2 card-text">Administrador: <span th:text="*{admin}"></p>
 									</div>
-									<div class="d-flex flex-row">
-									<p><a class="btn btn-secondary text-white" style="cursor:pointer"
+									<input name="username" id="usernameAjax" type="text" class="form-control" th:field="*{username}" th:placeholder="${usuMostrar.username}">
+									<input name="email" id="emailAjax" type="email" class="form-control" th:field="*{email}" th:placeholder="${usuMostrar.email}">
+											<a th:href="@{/usuariosRest/{id}(id=${usuMostrar.id})}" class="btn btn-primary">Consulta JSON</a>
+											<input type="submit" value="Edit normal" class="btn btn-secondary">
+											<button id="editAjax" type="submit" class="btn btn-warning">Edit AJAX</button>
+										
+									<!--<p><a class="btn btn-secondary text-white" style="cursor:pointer"
 										data-toggle="modal" data-target="#modal-edit"
-										th:attr="data-target='#modal-edit'+${usuMostrar.id}">Editar</a></p>
-									<p><a th:href="@{/usuarios}" class="btn btn-danger">Cerrar</a></p>
-									</div>
+										th:attr="data-target='#modal-edit'+${usuMostrar.id}">Editar</a></p>-->
+										<p><a th:href="@{/usuarios}" class="btn btn-danger">Cerrar</a></p>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -92,12 +98,6 @@
 													th:placeholder="${usuMostrar.email}" />
 			
 											</div>
-											<div class="form-group col-md-4">
-												<label class="p-0 ml-0" for="texto">Admin</label>
-												<input type="checkbox" name="admin" th:checked="${usuMostrar.admin}" th:field="*{admin}" class="form-control" id="exampleInputEmail1"
-													value="1" />
-			
-											</div>
 										</div>
 
 
@@ -117,7 +117,50 @@
 						<!-- /.modal-dialog -->
 					</div>
     </div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script>
+		$(document).ready(function(){
+			$("#editAjax").click(function(e){
+				console.log("Hola");
+				e.preventDefault();
+				
+				fire_ajax_submit();
+				
+			});
+			
+		});
+		
+		function fire_ajax_submit(){
+			//JSON del alumno a editar
+			var usuarioDTO={};
+			usuarioDTO["id"] = $("#idAjax").text();
+			usuarioDTO["username"] = $("#usernameAjax").val();
+			usuarioDTO["email"] = $("#emailAjax").val();
+			
+			
+			console.log(usuarioDTO);
+			$("#editAjax").prop("disable", true);
+			
+			console.log(JSON.stringify(usuarioDTO));
+			
+			//Peticion ASINC
+			$.ajax({
+				type:'POST',
+				contentType: "application/json",
+				url:"/usuarios/guardarAjax",
+				data: JSON.stringify(usuarioDTO),
+				dataType: 'json',
+				cache: 'false',
+				timeout:10000,
+				success: function(data){
+					$("#respuestaNombre").text(data.usuarioNuevo.username);
+					$("#respuestaEmail").text(data.usuarioNuevo.email);
+				},
+				error: function(e){
+					console.log("Error:"+e);
+				}
+			});
+		};
+	</script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import principal.model.Ingrediente;
 import principal.model.Receta;
+import principal.model.RecetasIngredientes;
 import principal.model.Usuario;
 import principal.servicios.impl.IngredienteServiceImpl;
 import principal.servicios.impl.RecetaServiceImpl;
@@ -37,7 +38,7 @@ public class MainController {
 	
 	@GetMapping(value = { "", "/" })
 	String home(Model model) {
-
+		//crearTablas();
 		// Buscar a la BBDD
 		ArrayList<Receta> misRecetas = (ArrayList<Receta>) receServiceImpl.listarRecetas();
 		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) userServiceImpl.listarUsuarios();
@@ -53,7 +54,7 @@ public class MainController {
 		return "index";
 	}
 
-	@GetMapping(value = { "/{id}" })
+	@GetMapping(value = { "/recetas/{id}" })
 	String idReceta(Model model, @PathVariable(name = "id") Integer id) {
 		
 		Receta recetaMostrar = receServiceImpl.obtenerRecetaPorId(id);
@@ -63,6 +64,8 @@ public class MainController {
 		model.addAttribute("recetaMostrar", recetaMostrar);
 		model.addAttribute("listaUsuarios", misUsuarios);
 		model.addAttribute("listaIngre", misIgre);
+		model.addAttribute("listaRecetasIngredientes", recetaMostrar.getIngredientes());
+		model.addAttribute("recetasIngredientesNew", new RecetasIngredientes(recetaMostrar, new Ingrediente(), 1));
 		//model.addAttribute("isEditable",editable);
 		return "receta";
 	}
@@ -92,13 +95,8 @@ public class MainController {
         
        //miDAO.insertarPedidoHibernate(pedidoNuevo);
        
-       
-        for(Ingrediente i: recetaNueva.getIngredientes()) {
-            i.getRecetas().add(recetaNueva);
-            //bocaDAO.modificarBocadilloHibernate(b);
-        }
-        receServiceImpl.insertarReceta(recetaNueva);
-        return "redirect:/";   
+       receServiceImpl.insertarReceta(recetaNueva);
+       return "redirect:/";   
     }
 	
 	@PostMapping(value={"/edit/{id}"})
@@ -106,19 +104,28 @@ public class MainController {
 		
 		Receta recetaAEditar = receServiceImpl.obtenerRecetaPorId(id);
 		
-		for (Ingrediente ingre : recetaAEditar.getIngredientes()) {
-			if(!recetaEditada.getIngredientes().contains(ingre)) {
-				ingre.getRecetas().remove(recetaAEditar);
+		for (RecetasIngredientes ri : recetaAEditar.getIngredientes()) {
+			if(!recetaEditada.getIngredientes().contains(ri)) {
+				recetaAEditar.removeIngrediente(ri.getIngrediente());
 			}
 		}
 		
-		for (Ingrediente ingreNuevo : recetaEditada.getIngredientes()) {
-			if(!recetaAEditar.getIngredientes().contains(ingreNuevo)) {
-				ingreNuevo.getRecetas().add(recetaEditada);
+		for (RecetasIngredientes riNew : recetaEditada.getIngredientes()) {
+			if(!recetaAEditar.getIngredientes().contains(riNew)) {
+				recetaAEditar.addIngrediente(riNew.getIngrediente(), riNew.getCantidad());
 			}
 		}
 		
-		receServiceImpl.insertarReceta(recetaEditada);
+		recetaAEditar.setNombre(recetaEditada.getNombre());
+		recetaAEditar.setValoracion(recetaEditada.getValoracion());
+		recetaAEditar.setFecha(recetaEditada.getFecha());
+		recetaAEditar.setDuracion(recetaEditada.getDuracion());
+		recetaAEditar.setTipo(recetaEditada.getTipo());
+		recetaAEditar.setOrigen(recetaEditada.getOrigen());
+		recetaAEditar.setInstrucciones(recetaEditada.getInstrucciones());
+		recetaAEditar.setDificultad(recetaEditada.getDificultad());
+		
+		receServiceImpl.insertarReceta(recetaAEditar);
 		
 		return "redirect:/";
 	}
@@ -128,5 +135,103 @@ public class MainController {
 		receServiceImpl.eliminarRecetaPorId(id);
 		return "redirect:/";
 	}
+	
+	@PostMapping({ "/addIngre/{id}" })
+	String addIngrediente(Model model, @ModelAttribute("recetasIngredientesNew") RecetasIngredientes recetasIngredientesNew, BindingResult bindingResult, @PathVariable Integer id) {
+
+		Receta recetaActual = receServiceImpl.obtenerRecetaPorId(id);
+		Ingrediente ingreAñadir = ingreServiceImpl.obtenerIngredientePorId(recetasIngredientesNew.getIngrediente().getId());
+
+		recetaActual.addIngrediente(ingreAñadir, recetasIngredientesNew.getCantidad());
+
+		receServiceImpl.insertarReceta(recetaActual);
+
+		return "redirect:/recetas/" + id;
+	}
+	
+	
+	
+	public void crearTablas() {
+		
+		Receta primeraReceta = new Receta("Tortilla Española",5f,15,"Comida","España", "Aqui se explica como facelo","Media");
+		Receta segundaReceta = new Receta("Sándwich mixto",4.5f,5,"Cena","Inglaterra", "Aqui se explica como facelo","Fácil");
+		Receta terceraReceta = new Receta("Tarta de Santiago",3.5f,60,"Postre","España", "Aqui se explica como facelo","Dificíl");
+		
+		Ingrediente pan = new Ingrediente("Pan de molde", "Cereal", true);
+		Ingrediente jamon = new Ingrediente("Jamon", "Carne", false);
+		Ingrediente queso = new Ingrediente("Queso", "Lacteo", false);
+		Ingrediente huevo = new Ingrediente("Huevo", "Producto Animal", false);
+		Ingrediente patata = new Ingrediente("Patata", "Verdura", false);
+		Ingrediente almendra = new Ingrediente("Almendra", "Fruto Seco", false);
+		Ingrediente mantequilla = new Ingrediente("Mantequilla", "Lacteo", false);
+		Ingrediente azucar = new Ingrediente("Azucar", "Azucar", false);
+		Ingrediente limon = new Ingrediente("Limon", "Fruta", false);
+		
+		Usuario usuario1 = new Usuario("Isabel","1234", "ejemplo@gmail.com");
+		Usuario usuario2 = new Usuario("Manolo","1234", "manolo@gmail.com");
+		Usuario usuario3 = new Usuario("Juan","1234", "juan@gmail.com");
+
+		usuario1.getRecetas().add(primeraReceta);
+		primeraReceta.setUsuario(usuario1);
+
+		usuario2.getRecetas().add(terceraReceta);
+		terceraReceta.setUsuario(usuario2);
+
+		usuario2.getRecetas().add(segundaReceta);
+		segundaReceta.setUsuario(usuario2);
+
+		userServiceImpl.insertarUsuario(usuario1);
+		userServiceImpl.insertarUsuario(usuario2);
+		
+		
+		ingreServiceImpl.insertarIngrediente(pan);
+		ingreServiceImpl.insertarIngrediente(jamon);
+		ingreServiceImpl.insertarIngrediente(queso);
+		ingreServiceImpl.insertarIngrediente(huevo);
+		ingreServiceImpl.insertarIngrediente(patata);
+		ingreServiceImpl.insertarIngrediente(almendra);
+		ingreServiceImpl.insertarIngrediente(mantequilla);
+		ingreServiceImpl.insertarIngrediente(azucar);
+		ingreServiceImpl.insertarIngrediente(limon);
+		
+		receServiceImpl.insertarReceta(primeraReceta);
+		receServiceImpl.insertarReceta(segundaReceta);
+		receServiceImpl.insertarReceta(terceraReceta);
+		
+		primeraReceta.addIngrediente(huevo, 1);
+		primeraReceta.addIngrediente(patata, 3);
+
+		segundaReceta.addIngrediente(pan, 5);
+		segundaReceta.addIngrediente(jamon, 3);
+		segundaReceta.addIngrediente(queso, 3);
+
+		terceraReceta.addIngrediente(huevo, 2);
+		terceraReceta.addIngrediente(almendra, 14);
+		terceraReceta.addIngrediente(mantequilla, 50);
+		terceraReceta.addIngrediente(azucar, 200);
+		terceraReceta.addIngrediente(limon, 2);
+		userServiceImpl.insertarUsuario(usuario3);
+		
+		/*
+		userServiceImpl.insertarUsuario(usuario1);
+		userServiceImpl.insertarUsuario(usuario2);
+		userServiceImpl.insertarUsuario(usuario3);
+
+		receServiceImpl.insertarReceta(primeraReceta);
+		receServiceImpl.insertarReceta(segundaReceta);
+		receServiceImpl.insertarReceta(terceraReceta);
+
+		ingreServiceImpl.insertarIngrediente(pan);
+		ingreServiceImpl.insertarIngrediente(jamon);
+		ingreServiceImpl.insertarIngrediente(queso);
+		ingreServiceImpl.insertarIngrediente(huevo);
+		ingreServiceImpl.insertarIngrediente(patata);
+		ingreServiceImpl.insertarIngrediente(almendra);
+		ingreServiceImpl.insertarIngrediente(mantequilla);
+		ingreServiceImpl.insertarIngrediente(azucar);
+		ingreServiceImpl.insertarIngrediente(limon);
+		 */
+	}
+	
 	
 }

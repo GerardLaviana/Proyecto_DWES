@@ -56,9 +56,6 @@ public class IngredienteController {
 	@PostMapping("/add")
     public String addIngre( @ModelAttribute("ingredienteaAdd") Ingrediente ingredienteNuevo,   BindingResult bindingResult) {        
        
-        for(Receta re: ingredienteNuevo.getRecetas()) {
-            re.getIngredientes().add(ingredienteNuevo);
-        }
         ingreServiceImpl.insertarIngrediente(ingredienteNuevo);
         return "redirect:/ingredientes";   
     }

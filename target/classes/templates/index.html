@@ -28,7 +28,7 @@
                         <img src="../img/receta1.jpg">
                     </div>
                     <div class="titulo-tarjeta">
-                        <a th:href="@{/{id}(id=${receta.id})}" class="text-white"><h2 th:text="${receta.nombre}">Titulo de la receta</h2></a>
+                        <a th:href="@{/recetas/{id}(id=${receta.id})}" class="text-white"><h2 th:text="${receta.nombre}">Titulo de la receta</h2></a>
                         <p>Valoración: <i class="fa-solid fa-star"></i> <span th:text="${receta.valoracion}"></p>
                         <p>Tipo: <span th:text="${receta.tipo}"></p>
                         <p>Origen: <span th:text="${receta.origen}"></p>
@@ -111,7 +111,7 @@
 
 								</div>
 							</div>
-							
+							<!--
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label class="p-0 ml-0" for="texto">Seleccionar ingredientes</label>
@@ -119,9 +119,12 @@
 										<option th:each="ingrediente : ${listaIngre}" th:value="${ingrediente.id}"
 											th:text="${ingrediente.nombre}" value="">Seleccionar Ingrediente</option>
 									</select>
-
+									<div class="col-4">
+										<label for="texto">Cantidad</label>
+										<input type="number" th:field="*{cantidad}" class="form-control" placeholder="1">
+									</div>
 								</div>
-							</div>
+							</div>-->
 						</div>
 
 						<div class="modal-footer">

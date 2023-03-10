@@ -45,8 +45,4 @@ public class RecetaServiceImpl implements RecetaService {
 		recetaRepo.delete(recetaRepo.findById(id).get());
 	}
 
-	
-
-	
-
 }

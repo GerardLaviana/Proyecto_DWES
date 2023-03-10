@@ -3,6 +3,7 @@ package principal.controllers;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -12,11 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import principal.model.AjaxResponseBody;
 import principal.model.Receta;
 import principal.model.Rol;
 import principal.model.Usuario;
+import principal.model.dto.UsuarioAjaxDTO;
 import principal.servicios.impl.RecetaServiceImpl;
 import principal.servicios.impl.UsuarioServiceImpl;
 
@@ -97,9 +101,26 @@ public class UsuarioController {
 		usuaEditar.setUsername(usuEditado.getUsername());
 		usuaEditar.setPassword(usuEditado.getPassword());
 		usuaEditar.setEmail(usuEditado.getEmail());
-		usuaEditar.setAdmin(usuEditado.isAdmin());
 		userServiceImpl.insertarUsuario(usuaEditar);
 		
-		return "redirect:/usuarios";
+		return "redirect:/usuarios/"+id;
+	}
+	
+	@PostMapping(value={"/guardarAjax"})
+	public ResponseEntity<?> ajaxUsuario(@RequestBody UsuarioAjaxDTO usuAjax) {
+		
+		AjaxResponseBody usuarioJSON = new AjaxResponseBody();
+		
+		usuarioJSON.setMensaje("Todo bien! :D");
+		
+		Usuario usuarioEditado = userServiceImpl.obtenerUsuarioPorId(usuAjax.getId());//Buscamos el usuario a editar por id
+		System.out.println(usuarioEditado.getPassword());
+		usuarioEditado.setUsername(usuAjax.getUsername()); //Setteamos el nuevo nombre
+		usuarioEditado.setEmail(usuAjax.getEmail());
+		userServiceImpl.insertarUsuario(usuarioEditado); // Guardo en la BBDD
+		
+		usuarioJSON.setUsuarioNuevo(usuarioEditado);
+		
+		return ResponseEntity.ok(usuarioJSON);
 	}
 }

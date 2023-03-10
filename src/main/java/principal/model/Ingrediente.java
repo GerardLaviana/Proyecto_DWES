@@ -6,14 +6,13 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity 
 @Table(name = "ingredientes")
@@ -33,23 +32,19 @@ public class Ingrediente {
 	@Column(name = "gluten")
 	private boolean gluten;
 	
-	@ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-	@JoinTable(
-			name="recetas_ingredientes",
-			joinColumns = {@JoinColumn(name="id_ingrediente")},
-			inverseJoinColumns = {@JoinColumn(name="id_receta")}
-	)
-	private Set<Receta> recetas;
+	@OneToMany( mappedBy = "ingrediente", cascade = CascadeType.MERGE, orphanRemoval = true)
+	@JsonIgnore
+	private Set<RecetasIngredientes> recetas;
 
 	public Ingrediente() {
-		this.recetas = new HashSet<Receta>();
+		this.recetas = new HashSet<RecetasIngredientes>();
 	}
 
 	public Ingrediente(String nombre, String tipo, boolean gluten) {
 		this.nombre = nombre;
 		this.tipo = tipo;
 		this.gluten = gluten;
-		this.recetas = new HashSet<Receta>();
+		this.recetas = new HashSet<RecetasIngredientes>();
 	}
 
 	public int getId() {
@@ -84,11 +79,11 @@ public class Ingrediente {
 		this.gluten = gluten;
 	}
 
-	public Set<Receta> getRecetas() {
+	public Set<RecetasIngredientes> getRecetas() {
 		return recetas;
 	}
 
-	public void setRecetas(Set<Receta> recetas) {
+	public void setRecetas(Set<RecetasIngredientes> recetas) {
 		this.recetas = recetas;
 	}
 

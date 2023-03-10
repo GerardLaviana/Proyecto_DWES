@@ -16,6 +16,7 @@
         <mapping class="principal.model.Ingrediente"/>
         <mapping class="principal.model.Usuario"/>
 		<mapping class="principal.model.Rol"/>
+		<mapping class="principal.model.Comentario"/>
  
 
     </session-factory>

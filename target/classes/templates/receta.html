@@ -38,8 +38,30 @@
 											<p class="mb-2 card-text">Pasos a seguir: <span class="m-0" th:text="*{instrucciones}">
 											</p>
 											<p class="mb-2 card-text">Usuario: <a class="m-0 text-dark" th:href="@{/usuarios/{id}(id=${recetaMostrar.usuario.id})}" th:text="*{usuario.username}"/></p>
-											<p class="mb-2 card-text">Ingredientes: <a
-													th:each="ingre : *{ingredientes}" class="text-dark m-0" th:href="@{/ingredientes/{id}(id=${ingre.id})}" th:text="${ingre.nombre}" /></p>
+											
+											<div class="card">
+												<div class="card-header text-dark bg-light">Ingredientes de la Receta</div>
+												<div class="card-body">
+													<table class="table table-hover">
+														<thead class="table dark bg-info text-white">
+															<tr>
+																<th scope="col">Ingrediente</th>
+																<th scope="col">Cantidad</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:if="${listaRecetasIngredientes.empty}">
+																<td colspan="2">No hay ingredientes</td>
+															</tr>
+															<tr th:each="receingre : ${listaRecetasIngredientes}">
+																<td name="ingredientes" id="ingredientes"><span th:value="${receingre.id}" th:text="${receingre.nombre}">Nombre del ingrediente</span></td>
+																<td><span th:value="${receingre.cantidad}" th:text="${receingre.cantidad}">Cantidad</span></td>
+															</tr>
+														</tbody>
+													</table>				
+												</div>
+											</div>
+						
 										</div>
 									</div>
 									<div class="d-flex flex-row">
@@ -135,7 +157,7 @@
 									</select>
 								</div>
 							</div>
-							<div class="form-row">
+							<!--<div class="form-row">
 								<div class="form-group col-md-12">
 									<label class="p-0 ml-0" for="texto">Seleccionar ingredientes</label>
 									<select th:field="*{ingredientes}" multiple="multiple"
@@ -147,7 +169,7 @@
 									</select>
 
 								</div>
-							</div>
+							</div>-->
 
 
 					</div>
@@ -164,7 +186,25 @@
 			</div>
 			<!-- /.modal-dialog -->
 		</div>
-
+		<div class="row pl-5 pr-5">
+				<form action="#" th:action="@{/addIngre/{id}(id=${recetaMostrar.id})}" th:object="${recetasIngredientesNew}" method="post">
+					<div class="mb-2">
+						<label for="texto">Añadir ingredientes a la receta</label>
+						<div class="col-7">
+						<select th:field="*{ingrediente.id}" class="form-control" id="bocadillo">
+							<option th:each="ingre:${listaIngre}" th:value="${ingre.id}" th:text="${ingre.nombre}">
+							Seleccionar Bocadillo</option>
+						</select>
+						</div>
+						<div class="col-4">
+						<label for="texto">Cantidad</label>
+						<input type="number" th:field="*{cantidad}" class="form-control" placeholder="1">
+						</div>
+					
+					<input type="submit" value="+" class="btn btn-primary m-3">
+					</div>
+				</form>
+			</div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
