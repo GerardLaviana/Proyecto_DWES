@@ -1,4 +1,4 @@
-package principal.servicios.interfaces;
+package principal.servicios;
 
 import java.util.List;
 

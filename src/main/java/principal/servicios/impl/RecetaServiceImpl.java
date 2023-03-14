@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import principal.model.Receta;
 import principal.persistencia.RecetaRepo;
-import principal.servicios.interfaces.RecetaService;
+import principal.servicios.RecetaService;
 
 @Service
 public class RecetaServiceImpl implements RecetaService {

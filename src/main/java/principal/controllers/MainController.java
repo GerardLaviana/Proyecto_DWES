@@ -3,11 +3,10 @@ package principal.controllers;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,61 +59,32 @@ public class MainController {
 		Receta recetaMostrar = receServiceImpl.obtenerRecetaPorId(id);
 		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) userServiceImpl.listarUsuarios();
 		ArrayList<Ingrediente> misIgre = (ArrayList<Ingrediente>) ingreServiceImpl.listarIngredientes();
-		//boolean editable = isEditable(recetaMostrar.getUsuario().getUsername());
+		boolean editable = userServiceImpl.isEditable(recetaMostrar.getUsuario().getUsername());
 		model.addAttribute("recetaMostrar", recetaMostrar);
 		model.addAttribute("listaUsuarios", misUsuarios);
 		model.addAttribute("listaIngre", misIgre);
 		model.addAttribute("listaRecetasIngredientes", recetaMostrar.getIngredientes());
 		model.addAttribute("recetasIngredientesNew", new RecetasIngredientes(recetaMostrar, new Ingrediente(), 1));
-		//model.addAttribute("isEditable",editable);
+		model.addAttribute("isEditable",editable);
 		return "receta";
 	}
 	
-	
-	/**
-	public boolean isEditable(String nombreUsu) {
-    	Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	UserDetails usuDetails = null;
-    	if(auth instanceof UserDetails) {
-    		usuDetails = (UserDetails) auth;
-    		if(usuDetails.getUsername()==nombreUsu){
-    			return true;
-    		}
-    	}
-    	return false;
-    }*/
-
-	@PostMapping("/add")
+	@PostMapping("/recetas/add")
     public String addReceta( @ModelAttribute("recetaNueva") Receta recetaNueva,   BindingResult bindingResult) {        
        
-       //Alumno alumnoNuevo = alumDAO.buscarAlumnoHibernate(pedidoNuevo.getAlumno().getId());
-       Usuario usuarioNuevo = userServiceImpl.obtenerUsuarioPorId(recetaNueva.getUsuario().getId());
+       Usuario usuarioReceta = userServiceImpl.obtenerUsuarioPorUsername(userServiceImpl.obtenerNombreUsuarioLoggeado());
        
-       usuarioNuevo.getRecetas().add(recetaNueva);
-       recetaNueva.setUsuario(usuarioNuevo);
-        
-       //miDAO.insertarPedidoHibernate(pedidoNuevo);
+       usuarioReceta.getRecetas().add(recetaNueva);
+       recetaNueva.setUsuario(usuarioReceta);
        
        receServiceImpl.insertarReceta(recetaNueva);
        return "redirect:/";   
     }
 	
-	@PostMapping(value={"/edit/{id}"})
+	@PostMapping(value={"/recetas/edit/{id}"})
 	public String editReceta(@PathVariable(name="id") Integer id, @ModelAttribute("recetaMostrar") Receta recetaEditada, BindingResult binding ) {
 		
 		Receta recetaAEditar = receServiceImpl.obtenerRecetaPorId(id);
-		
-		for (RecetasIngredientes ri : recetaAEditar.getIngredientes()) {
-			if(!recetaEditada.getIngredientes().contains(ri)) {
-				recetaAEditar.removeIngrediente(ri.getIngrediente());
-			}
-		}
-		
-		for (RecetasIngredientes riNew : recetaEditada.getIngredientes()) {
-			if(!recetaAEditar.getIngredientes().contains(riNew)) {
-				recetaAEditar.addIngrediente(riNew.getIngrediente(), riNew.getCantidad());
-			}
-		}
 		
 		recetaAEditar.setNombre(recetaEditada.getNombre());
 		recetaAEditar.setValoracion(recetaEditada.getValoracion());
@@ -124,13 +94,14 @@ public class MainController {
 		recetaAEditar.setOrigen(recetaEditada.getOrigen());
 		recetaAEditar.setInstrucciones(recetaEditada.getInstrucciones());
 		recetaAEditar.setDificultad(recetaEditada.getDificultad());
+		recetaAEditar.setUsuario(recetaEditada.getUsuario());
 		
 		receServiceImpl.insertarReceta(recetaAEditar);
 		
 		return "redirect:/";
 	}
 	
-	@GetMapping(value={"/delete/{id}"})
+	@DeleteMapping(value={"/recetas/delete/{id}"})
 	String deleteReceta(@PathVariable(name="id") Integer id) {
 		receServiceImpl.eliminarRecetaPorId(id);
 		return "redirect:/";
@@ -148,8 +119,6 @@ public class MainController {
 
 		return "redirect:/recetas/" + id;
 	}
-	
-	
 	
 	public void crearTablas() {
 		

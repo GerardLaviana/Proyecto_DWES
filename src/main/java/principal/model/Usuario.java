@@ -47,11 +47,8 @@ public class Usuario implements UserDetails{
 	@Column(name = "email")
 	private String email;
 
-	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private Set<Receta> recetas;
-	
-	@OneToMany(mappedBy="usuario", fetch = FetchType.EAGER )
-	private Set<Comentario> comentarios;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
@@ -63,7 +60,6 @@ public class Usuario implements UserDetails{
 
 	public Usuario() {
 		this.recetas = new HashSet<Receta>();
-		this.comentarios = new HashSet<Comentario>();
 		this.roles = new HashSet<Rol>();
 	}
 
@@ -72,7 +68,6 @@ public class Usuario implements UserDetails{
 		this.password = password;
 		this.email = email;
 		this.recetas = new HashSet<Receta>();
-		this.comentarios = new HashSet<Comentario>();
 		this.roles = new HashSet<Rol>();
 	}
 
@@ -114,14 +109,6 @@ public class Usuario implements UserDetails{
 
 	public void setRecetas(Set<Receta> recetas) {
 		this.recetas = recetas;
-	}
-	
-	public Set<Comentario> getComentarios() {
-		return comentarios;
-	}
-
-	public void setComentarios(Set<Comentario> comentarios) {
-		this.comentarios = comentarios;
 	}
 
 	public Collection<Rol> getRoles() {

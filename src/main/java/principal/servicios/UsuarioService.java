@@ -1,4 +1,4 @@
-package principal.servicios.interfaces;
+package principal.servicios;
 
 import java.util.List;
 
@@ -16,4 +16,5 @@ public interface UsuarioService extends UserDetailsService{
 	public Usuario obtenerUsuarioPorUsername(String nombreUsuario);
 	public void eliminarUsuario(Usuario user);
 	public void eliminarUsuarioPorId(Integer id);
+	public String obtenerNombreUsuarioLoggeado();
 }

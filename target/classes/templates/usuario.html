@@ -47,7 +47,7 @@
 								<div class="card-header text-dark bg-light m-0">Recetas creadas por este Usuario</div>
 								<div class="card-body">
 									<span th:each="receta : *{recetas}">
-										<p><a th:href="@{/{id}(id=${receta.id})}" class="card-text text-dark" th:text="${receta.nombre}">Nombre de la Receta</a></p>
+										<p><a th:href="@{/recetas/{id}(id=${receta.id})}" class="card-text text-white" th:text="${receta.nombre}">Nombre de la Receta</a></p>
 									</span>
 								</div>
 							</div>

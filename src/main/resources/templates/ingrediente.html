@@ -27,10 +27,10 @@
 										<p class="mb-2 card-text">Gluten: <span th:text="*{gluten}"></p>
 									</div>
 									<div class="d-flex flex-row">
-									<p><a sec:authorize="isAuthenticated()" class="btn btn-secondary text-white" style="cursor:pointer"
+									<p sec:authorize="isAuthenticated()"><a class="btn btn-secondary text-white m-0" style="cursor:pointer"
 										data-toggle="modal" data-target="#modal-edit"
 										th:attr="data-target='#modal-edit'+${ingreMostrar.id}">Editar</a></p>
-									<p><a th:href="@{/ingredientes}" class="btn btn-danger">Cerrar</a></p>
+									<p><a th:href="@{/ingredientes}" class="btn btn-dark m-0">Cerrar</a></p>
 									</div>
 								</div>
 							</div>
@@ -40,7 +40,7 @@
 								<div class="card-header text-dark bg-light m-0">Recetas con este Ingrediente</div>
 								<div class="card-body">
 									<span th:each="receta : *{recetas}">
-										<p><a th:href="@{/{id}(id=${receta.id})}" class="card-text text-dark" th:text="${receta.nombre}">Id de la Receta</a></p>
+										<p><a th:href="@{/recetas/{id}(id=${receta.receta.id})}" class="card-text text-white" th:text="${receta.receta.nombre}">Id de la Receta</a></p>
 									</span>
 								</div>
 							</div>

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,7 +14,7 @@ import principal.model.Rol;
 import principal.model.Usuario;
 import principal.model.dto.UsuarioDTO;
 import principal.persistencia.UsuarioRepo;
-import principal.servicios.interfaces.UsuarioService;
+import principal.servicios.UsuarioService;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -71,5 +72,41 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public void eliminarUsuarioPorId(Integer id) {
 		usuarioRepo.delete(usuarioRepo.findById(id).get());
 	}
-
+	
+	@Override
+	public String obtenerNombreUsuarioLoggeado() {
+		Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	UserDetails usuDetails = null;
+    	if(auth instanceof UserDetails) {
+    		usuDetails = (UserDetails) auth;
+    		return usuDetails.getUsername();
+    	}
+    	return null;
+	}
+	
+	public boolean isEditable(String nombreUsu) {
+    	String usuarioLogeado = obtenerNombreUsuarioLoggeado();
+    	if(usuarioLogeado != null) {
+	    	if(usuarioLogeado.equals(nombreUsu) || isAdmin()){
+				return true;
+			}
+	    }
+    	return false;
+    }
+	
+	public boolean isAdmin() {
+    	Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	UserDetails usuDetails = null;
+    	if(auth instanceof UserDetails) {
+    		usuDetails = (UserDetails) auth;
+    		Usuario u = obtenerUsuarioPorUsername(usuDetails.getUsername());
+    		for(Rol r : u.getRoles()){
+    			if(r.getNombre().compareTo("ROLE_ADMIN") == 0){
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
 }

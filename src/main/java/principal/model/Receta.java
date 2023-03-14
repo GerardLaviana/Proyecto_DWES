@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,9 +55,6 @@ public class Receta {
 	@JsonIgnore
 	private Usuario usuario;
 	
-	@OneToMany(mappedBy="receta", fetch = FetchType.EAGER )
-	private Set<Comentario> comentarios;
-	
 	@OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<RecetasIngredientes> ingredientes;
 
@@ -66,7 +62,6 @@ public class Receta {
 		this.fecha = new Date();
 		this.valoracion = 0f;
 		this.usuario = new Usuario();
-		this.comentarios = new HashSet<Comentario>();
 		this.ingredientes = new HashSet<RecetasIngredientes>();
 	}
 
@@ -81,7 +76,6 @@ public class Receta {
 		this.dificultad = dificultad;
 		this.fecha = new Date();
 		this.usuario = new Usuario();
-		this.comentarios = new HashSet<Comentario>();
 		this.ingredientes = new HashSet<RecetasIngredientes>();
 	}
 
@@ -163,14 +157,6 @@ public class Receta {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
-	}
-	
-	public Set<Comentario> getComentarios() {
-		return comentarios;
-	}
-
-	public void setComentarios(Set<Comentario> comentarios) {
-		this.comentarios = comentarios;
 	}
 
 	public Set<RecetasIngredientes> getIngredientes() {

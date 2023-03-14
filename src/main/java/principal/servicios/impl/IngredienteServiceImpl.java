@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import principal.model.Ingrediente;
 import principal.persistencia.IngredienteRepo;
-import principal.servicios.interfaces.IngredienteService;
+import principal.servicios.IngredienteService;
 
 @Service
 public class IngredienteServiceImpl implements IngredienteService {
