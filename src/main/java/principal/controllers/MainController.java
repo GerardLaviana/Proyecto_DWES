@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,12 +59,14 @@ public class MainController {
 		ArrayList<Usuario> misUsuarios = (ArrayList<Usuario>) userServiceImpl.listarUsuarios();
 		ArrayList<Ingrediente> misIgre = (ArrayList<Ingrediente>) ingreServiceImpl.listarIngredientes();
 		boolean editable = userServiceImpl.isEditable(recetaMostrar.getUsuario().getUsername());
+		boolean admin = userServiceImpl.isAdmin();
 		model.addAttribute("recetaMostrar", recetaMostrar);
 		model.addAttribute("listaUsuarios", misUsuarios);
 		model.addAttribute("listaIngre", misIgre);
 		model.addAttribute("listaRecetasIngredientes", recetaMostrar.getIngredientes());
 		model.addAttribute("recetasIngredientesNew", new RecetasIngredientes(recetaMostrar, new Ingrediente(), 1));
 		model.addAttribute("isEditable",editable);
+		model.addAttribute("isAdmin",admin);
 		return "receta";
 	}
 	
@@ -101,7 +102,7 @@ public class MainController {
 		return "redirect:/";
 	}
 	
-	@DeleteMapping(value={"/recetas/delete/{id}"})
+	@GetMapping(value={"/recetas/delete/{id}"})
 	String deleteReceta(@PathVariable(name="id") Integer id) {
 		receServiceImpl.eliminarRecetaPorId(id);
 		return "redirect:/";

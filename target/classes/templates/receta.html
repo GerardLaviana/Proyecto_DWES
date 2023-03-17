@@ -38,8 +38,8 @@
 											<p class="mb-2 card-text">Pasos a seguir: <span class="m-0" th:text="*{instrucciones}">
 											</p>
 											<p class="mb-2 card-text">Usuario: 
-												<a th:if="!${isEditable}" class="m-0 text-dark" th:text="*{usuario.username}"/>
-												<a th:if="${isEditable}" class="m-0 text-white" th:href="@{/usuarios/{id}(id=${recetaMostrar.usuario.id})}" th:text="*{usuario.username}"/></p>
+												<a th:if="!${isAdmin}" class="m-0 text-dark" th:text="*{usuario.username}"/>
+												<a th:if="${isAdmin}" class="m-0 text-white" th:href="@{/usuarios/{id}(id=${recetaMostrar.usuario.id})}" th:text="*{usuario.username}"/></p>
 											
 											<div class="card p-0">
 												<div class="card-header text-dark bg-light m-0">Ingredientes de la Receta</div>
